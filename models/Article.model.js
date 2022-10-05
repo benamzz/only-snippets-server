@@ -5,24 +5,25 @@ const Snippet = require("./Snippet.model")
 // TODO: Please make sure you edit the user model to whatever makes sense in this case
 const articleSchema = new Schema(
   {
-   content: String,
-   tag: String,
-   userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User"
-   },
-   comments:[{
-    type: Schema.Types.ObjectId,
-    ref: "Article"
-   }],
-    snippet:{
-        type: Schema.Types.ObjectId,
-        ref: "Snippet" 
+    content: String,
+    tag: String,
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User"
     },
-    parentId:{
-        type: Schema.Types.ObjectId,
-        ref: "Article"
-    }
+    comments: [{
+      type: Schema.Types.ObjectId,
+      ref: "Article"
+    }],
+    snippet: {
+      type: Schema.Types.ObjectId,
+      ref: "Snippet"
+    },
+    parentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Article"
+    },
+    deletedAt: Date
   },
   {
     // this second object adds extra properties: `createdAt` and `updatedAt`
