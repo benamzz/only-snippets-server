@@ -5,13 +5,13 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      unique: true
+      // unique: true
     },
     password: {
       type: String,
       required: true
     },
-    avatarImg: String,
+    avatarUrl: String,
     email: {
       type: String,
       unique: true,

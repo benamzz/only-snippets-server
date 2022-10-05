@@ -105,18 +105,42 @@ router.patch("/users/:userId", (req, res, next) => {
         next(err)
         return;
       }
+      //req.body contient il un champs username
+      //si oui => s'assurer que le username est unique
+      //si oui=> update User
+      //si non=> error message "please provide an other username"
+      //si non => yolo
 
-      User.findByIdAndUpdate(req.params.userId, req.body, { new: true })
-        .then(response => {
-          if (!response) {
-            const err = new Error('Could not find User')
-            err.status = 403
-            next(err)
-            return
-          }
-          res.status(200).json({ userUpdated: response })
-        })
-        .catch(err => next(err));
+      if (req.body.username) {
+        User.findOne({ username: req.body.username })
+          .then((user) => {
+            if (user) {
+              const err = new Error('username already taken')
+              next(err)
+              return
+            } else {
+              after()
+            }
+          })
+          .catch((err) => next(err))
+      } else {
+        after()
+      }
+
+      function after() {
+        User.findByIdAndUpdate(req.params.userId, req.body, { new: true })
+          .then(response => {
+            if (!response) {
+              const err = new Error('Could not find User')
+              err.status = 403
+              next(err)
+              return
+            }
+            res.status(200).json({ userUpdated: response })
+          })
+          .catch(err => next(err));
+      }
+
     })
     .catch(err => next(err));
 })
