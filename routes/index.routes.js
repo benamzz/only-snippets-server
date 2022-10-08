@@ -65,14 +65,14 @@ router.get("/users/:userId", (req, res, next) => {
     return;
   }
   User.findById(req.params.userId)
-    .then(response => {
-      if (!response) {
+    .then(userFromDB => {
+      if (!userFromDB) {
         const err = new Error('Could not find User with this id')
         err.status = 404
         next(err)
         return
       }
-      res.status(200).json({ user: response })
+      res.status(200).json(userFromDB)
     })
     .catch(err => next(err));
 });
