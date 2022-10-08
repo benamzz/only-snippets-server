@@ -20,6 +20,7 @@ module.exports = (app) => {
   app.set("trust proxy", 1);
 
   // controls a very specific header to pass headers from the frontend
+  console.log("coucou")
   app.use(
     cors({
       credentials: true,
