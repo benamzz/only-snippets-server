@@ -97,10 +97,10 @@ router.post('/sessions', (req, res, next) => {
 
       if (passwordCorrect) {
         // Deconstruct the user object to omit the password
-        const { _id, email } = foundUser;
+        const { _id, email, avatarUrl, username, bio, location, tags, website, linkedin, github, following, likes } = foundUser;
 
         // Create an object that will be set as the token payload
-        const payload = { _id, email };
+        const payload = { _id,  email, avatarUrl, username, bio, location, tags, website, linkedin, github, following, likes };
 
         // Create and sign the token
         const authToken = jwt.sign(
@@ -121,7 +121,7 @@ router.post('/sessions', (req, res, next) => {
 });
 
 // GET  /auth/sessions  -  Used to verify JWT stored on the client
-router.get('/sessions', isAuthenticated, (req, res, next) => {
+router.get('/session', isAuthenticated, (req, res, next) => {
 
   // If JWT token is valid the payload gets decoded by the
   // isAuthenticated middleware and made available on `req.payload`
