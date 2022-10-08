@@ -54,7 +54,7 @@ router.post('/users', (req, res, next) => {
       const { email, _id } = createdUser;
 
       //create custom username
-      const username = email.split("@")[0] + "#" + _id.toString().slice(-7)
+      const username = email.split("@")[0] + "#" + _id.toString().slice(-5)
 
       // Create a new object that doesn't expose the password
       const user = { email, _id, username };
