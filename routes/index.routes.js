@@ -14,7 +14,7 @@ router.get("/users/:userId/followers", (req, res, next) => {
     return;
   }
   User.find({ following: req.params.userId })
-    .then(followers => res.status(200).json({ followers: followers }))
+    .then(followers => res.status(200).json(followers))
     .catch(err => next(err))
 })
 
@@ -78,14 +78,14 @@ router.get("/users/:userId", (req, res, next) => {
     return;
   }
   User.findById(req.params.userId)
-    .then(response => {
-      if (!response) {
+    .then(user => {
+      if (!user) {
         const err = new Error('Could not find User with this id')
         err.status = 404
         next(err)
         return
       }
-      res.status(200).json({ user: response })
+      res.status(200).json(user)
     })
     .catch(err => next(err));
 });
