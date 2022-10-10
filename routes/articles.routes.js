@@ -112,7 +112,8 @@ router.post("/", (req, res, next) => {
 
 //liste des articles
 router.get("/", (req, res, next) => {
-    Article.find()
+    const { userId } = req.query
+    Article.find({ userId: userId })
         .then(response => res.status(200).json({ articles: response }))
         .catch(err => next(err));
 });

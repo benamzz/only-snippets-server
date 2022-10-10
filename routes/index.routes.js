@@ -5,6 +5,19 @@ const fileUploader = require("../config/cloudinary.config");
 
 
 // USERS
+//liste des followers d'un user
+router.get("/users/:userId/followers", (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+    const err = new Error("User id is not valid")
+    err.status = 400
+    next(err)
+    return;
+  }
+  User.find({ following: req.params.userId })
+    .then(followers => res.status(200).json({ followers: followers }))
+    .catch(err => next(err))
+})
+
 // follow d'un user
 router.put("/users/:userId/follow", (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
@@ -65,14 +78,14 @@ router.get("/users/:userId", (req, res, next) => {
     return;
   }
   User.findById(req.params.userId)
-    .then(userFromDB => {
-      if (!userFromDB) {
+    .then(response => {
+      if (!response) {
         const err = new Error('Could not find User with this id')
         err.status = 404
         next(err)
         return
       }
-      res.status(200).json(userFromDB)
+      res.status(200).json({ user: response })
     })
     .catch(err => next(err));
 });
