@@ -2,6 +2,8 @@ const router = require("express").Router();
 const User = require("../models/User.model");
 const mongoose = require("mongoose");
 const fileUploader = require("../config/cloudinary.config");
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 
 
 // USERS
@@ -141,8 +143,17 @@ router.patch("/users/:userId", (req, res, next) => {
       }
 
       function after() {
-        User.findByIdAndUpdate(req.params.userId, req.body, { new: true })
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+        const {email, username, avatarUrl, bio, tags, website, linkedin, github, location}= req.body
+        User.findByIdAndUpdate(req.params.userId, ({email, username, avatarUrl, bio, tags, website, linkedin, github, location}, {password : hashedPassword}), { new: true })
           .then(response => {
+            const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+            if (!passwordRegex.test(req.body.password)) {
+            res.status(400).json({ message: 'Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.' });
+            return;
+           }
+           
             if (!response) {
               const err = new Error('Could not find User')
               err.status = 403
