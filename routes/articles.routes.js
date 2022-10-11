@@ -67,7 +67,7 @@ router.get("/:articleId/comments", (req, res, next) => {
                 next(err)
                 return
             }
-            res.status(200).json({ comments: comments })
+            res.status(200).json(comments)
         })
         .catch(err => next(err))
 });
@@ -88,7 +88,7 @@ router.get("/:articleId", (req, res, next) => {
                 next(err)
                 return
             }
-            res.status(200).json({ article: response })
+            res.status(200).json(response)
         })
         .catch(err => next(err));
 });
@@ -114,7 +114,8 @@ router.post("/", (req, res, next) => {
 router.get("/", (req, res, next) => {
     const { userId } = req.query
     Article.find({ userId: userId })
-        .then(response => res.status(200).json({ articles: response }))
+        .populate('userId')
+        .then(articles => res.status(200).json(articles))
         .catch(err => next(err));
 });
 
@@ -205,8 +206,11 @@ router.post("/:articleId/snippets", (req, res, next) => {
                 userId: req.payload._id,
                 articleId: req.params.id,
             })
-                .then(snippetFromDB => {
-                    res.status(201).json(snippetFromDB)
+                .then(createdSnippet => {
+                    console.log('createdSnippet:', createdSnippet)
+                    article.snippet = createdSnippet._id
+                    article.save()
+                    res.status(201).json(createdSnippet)
                 })
                 .catch(err => next(err))
         })

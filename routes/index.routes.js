@@ -126,11 +126,12 @@ router.patch("/users/:userId", (req, res, next) => {
       //si non=> error message "please provide an other username"
       //si non => yolo
 
-      if (req.body.username) {
+      if (req.body.username !== userFromDB.username) {
         User.findOne({ username: req.body.username })
           .then((user) => {
             if (user) {
               const err = new Error('username already taken')
+              err.status = 400
               next(err)
               return
             } else {
@@ -143,24 +144,17 @@ router.patch("/users/:userId", (req, res, next) => {
       }
 
       function after() {
-        const salt = bcrypt.genSaltSync(saltRounds);
-        const hashedPassword = bcrypt.hashSync(req.body.password, salt);
-        const {email, username, avatarUrl, bio, tags, website, linkedin, github, location}= req.body
-        User.findByIdAndUpdate(req.params.userId, ({email, username, avatarUrl, bio, tags, website, linkedin, github, location}, {password : hashedPassword}), { new: true })
-          .then(response => {
-            const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
-            if (!passwordRegex.test(req.body.password)) {
-            res.status(400).json({ message: 'Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.' });
-            return;
-           }
-           
-            if (!response) {
+        const { username, location, bio, avatarUrl, website, linkedin, github } = req.body
+        User.findByIdAndUpdate(req.params.userId, { username, location, bio, avatarUrl, website, linkedin, github }, { new: true })
+          .then(user => {
+            if (!user) {
               const err = new Error('Could not find User')
               err.status = 403
               next(err)
               return
             }
-            res.status(200).json({ userUpdated: response })
+            user.password = undefined
+            res.status(200).json(user)
           })
           .catch(err => next(err));
       }
@@ -169,6 +163,25 @@ router.patch("/users/:userId", (req, res, next) => {
     .catch(err => next(err));
 })
 
+//édition password user
+router.put("/user/editpassword", (req, res, next) => {
+  if (!req.body.password) {
+    const err = new Error("You must provide a password")
+    err.status = 400
+    next(err)
+    return
+  }
+  const salt = bcrypt.genSaltSync(saltRounds);
+  const hashedPassword = bcrypt.hashSync(req.body.password, salt);
+  const passwordRegex = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/;
+  if (!passwordRegex.test(req.body.password)) {
+    res.status(400).json({ message: 'Password must have at least 6 characters and contain at least one number, one lowercase and one uppercase letter.' });
+    return;
+  }
+  User.findByIdAndUpdate(req.payload._id, { password: hashedPassword }, { new: true })
+    .then(() => res.status(204).end())
+    .catch(err => console.log(err))
+})
 
 //IMAGE
 //upload d'une image
