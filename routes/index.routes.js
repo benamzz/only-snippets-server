@@ -5,7 +5,7 @@ const fileUploader = require("../config/cloudinary.config");
 const bcrypt = require('bcryptjs');
 const Article = require("../models/Article.model");
 const saltRounds = 10;
-
+const ObjectId = require('mongodb').ObjectId;
 
 // USERS
 
@@ -18,20 +18,20 @@ router.get("/users/:userId/likes", (req, res, next) => {
     return;
   }
   User.findById(req.params.userId)
-  .then(user => {
-      Article.find({_id:{"$in":user.likes}})
-      .then(likes => {       
-        likes.map(el => {
-          console.log("likes = ", el)
-          return el.password=undefined
-      })    
-        res.status(200).json(likes)})
-      .catch(err => next(err))
+    .then(user => {
+      Article.find({ _id: { "$in": user.likes } })
+        .then(likes => {
+          likes.map(el => {
+            return el.password = undefined
+          })
+          res.status(200).json(likes)
+        })
+        .catch(err => next(err))
     })
-  .catch(err => next(err))
-  })
+    .catch(err => next(err))
+})
 
-  
+
 
 //liste des followers d'un user
 router.get("/users/:userId/followers", (req, res, next) => {
@@ -43,12 +43,13 @@ router.get("/users/:userId/followers", (req, res, next) => {
   }
   User.find({ following: req.params.userId })
     .then(followers => {
-      
+
       followers.map(el => {
         console.log("el = ", el)
-        return el.password=undefined
-    })    
-      res.status(200).json(followers)})
+        return el.password = undefined
+      })
+      res.status(200).json(followers)
+    })
     .catch(err => next(err))
 })
 
@@ -70,11 +71,12 @@ router.put("/users/:userId/follow", (req, res, next) => {
       }
       User.findById(req.payload._id)
         .then((user) => {
-          user.following.push(req.params.userId)
+          user.following.push(ObjectId(req.params.userId))
           user.save()
             .then((response) => {
-            user.password = undefined
-            res.status(200).json(response)})
+              user.password = undefined
+              res.status(200).json(response)
+            })
             .catch(err => next(err))
         })
         .catch(err => next(err))
@@ -84,6 +86,7 @@ router.put("/users/:userId/follow", (req, res, next) => {
 
 // unfollow d'un user
 router.put("/users/:userId/unfollow", (req, res, next) => {
+  console.log("req.params.userId = ", req.params.userId)
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -98,8 +101,12 @@ router.put("/users/:userId/unfollow", (req, res, next) => {
         next(err)
         return
       }
-      User.findByIdAndUpdate(req.payload._id, { $pull: { following: req.params.userId } }, { new: true })
-        .then(response => res.status(200).json({ userUpdatedFollows: response }))
+      User.findByIdAndUpdate(req.payload._id, { $pull: { following: ObjectId(req.params.userId) } }, { new: true })
+        .then(response => {
+          console.log("response = ", response)
+          res.status(200).json({ userUpdatedFollows: response })
+        })
+
         .catch(err => next(err))
     })
     .catch(err => next(err))
@@ -114,6 +121,7 @@ router.get("/users/:userId", (req, res, next) => {
     return;
   }
   User.findById(req.params.userId)
+    .populate("following")
     .then(user => {
       if (!user) {
         const err = new Error('Could not find User with this id')
@@ -121,7 +129,8 @@ router.get("/users/:userId", (req, res, next) => {
         next(err)
         return
       }
-      user.password=undefined
+      console.log("user = ", user)
+      user.password = undefined
       res.status(200).json(user)
     })
     .catch(err => next(err));
