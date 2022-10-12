@@ -17,11 +17,11 @@ router.get("/users/:userId/followers", (req, res, next) => {
   }
   User.find({ following: req.params.userId })
     .then(followers => {
-      console.log("HELLO FOLLOWERS = ",followers)
-      for(let i = 0; i<followers.length; i++){
-        followers[i].password=undefined
-      }
       
+      followers.map(el => {
+        console.log("el = ", el)
+        return el.password=undefined
+    })    
       res.status(200).json(followers)})
     .catch(err => next(err))
 })

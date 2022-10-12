@@ -88,6 +88,7 @@ router.get("/:articleId", (req, res, next) => {
                 next(err)
                 return
             }
+            response.userId.password=undefined
             res.status(200).json(response)
         })
         .catch(err => next(err));
@@ -114,8 +115,10 @@ router.post("/", (req, res, next) => {
 router.get("/", (req, res, next) => {
     const { userId } = req.query
     Article.find({ userId: userId })
-        .populate('userId')
-        .then(articles => res.status(200).json(articles))
+        .populate('userId', "")
+        .then(articles => {
+            articles.map(el => el.userId.password=undefined)
+            res.status(200).json(articles)})
         .catch(err => next(err));
 });
 
@@ -202,7 +205,7 @@ router.post("/:articleId/snippets", (req, res, next) => {
                 return
             }
             Snippet.create({
-                content: req.body.content,
+                content: req.body.snippet,
                 userId: req.payload._id,
                 articleId: req.params.id,
             })
