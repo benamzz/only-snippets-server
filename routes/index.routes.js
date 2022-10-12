@@ -10,24 +10,28 @@ const saltRounds = 10;
 // USERS
 
 // liste des articles likés
-// router.get("/users/:userId/likes", (req, res, next) => {
-//   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-//     const err = new Error("User id is not valid")
-//     err.status = 400
-//     next(err)
-//     return;
-//   }
-//   const { userId } = req.query
-//   Article.find({ likes: req.params.userId })
-//   .then(likes => {
-    
-//     likes.map(el => {
-//       console.log("likes = ", el)
-//       return el.password=undefined
-//   })    
-//     res.status(200).json(followers)})
-//   .catch(err => next(err))
-// })
+router.get("/users/:userId/likes", (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+    const err = new Error("User id is not valid")
+    err.status = 400
+    next(err)
+    return;
+  }
+  User.findById(req.params.userId)
+  .then(user => {
+      Article.find({_id:{"$in":user.likes}})
+      .then(likes => {       
+        likes.map(el => {
+          console.log("likes = ", el)
+          return el.password=undefined
+      })    
+        res.status(200).json(likes)})
+      .catch(err => next(err))
+    })
+  .catch(err => next(err))
+  })
+
+  
 
 //liste des followers d'un user
 router.get("/users/:userId/followers", (req, res, next) => {
