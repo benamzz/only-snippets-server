@@ -21,8 +21,15 @@ router.put("/:articleId/like", (req, res, next) => {
                 next(err)
                 return
             }
-            User.findByIdAndUpdate(req.payload._id, { likes: req.params.articleId }, { new: true })
-                .then(user => res.status(200).json({ userUpdated: user }))
+            User.findById(req.payload._id)
+                .then(user => {
+                    user.likes.push(req.params.articleId)
+                    user.save()
+                        .then((response) => {
+                            user.password = undefined
+                            res.status(200).json(response)})
+                        .catch(err => next(err))
+                        })                   
                 .catch(err => next(err))
         })
         .catch(err => next(err))
