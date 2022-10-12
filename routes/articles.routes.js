@@ -27,9 +27,10 @@ router.put("/:articleId/like", (req, res, next) => {
                     user.save()
                         .then((response) => {
                             user.password = undefined
-                            res.status(200).json(response)})
+                            res.status(200).json(response)
+                        })
                         .catch(err => next(err))
-                        })                   
+                })
                 .catch(err => next(err))
         })
         .catch(err => next(err))
@@ -95,7 +96,7 @@ router.get("/:articleId", (req, res, next) => {
                 next(err)
                 return
             }
-            response.userId.password=undefined
+            response.userId.password = undefined
             res.status(200).json(response)
         })
         .catch(err => next(err));
@@ -121,12 +122,24 @@ router.post("/", (req, res, next) => {
 //liste des articles
 router.get("/", (req, res, next) => {
     const { userId } = req.query
-    Article.find({ userId: userId })
-        .populate('userId', "")
-        .then(articles => {
-            articles.map(el => el.userId.password=undefined)
-            res.status(200).json(articles)})
-        .catch(err => next(err));
+    if (!userId) {
+        Article.find()
+            .populate('userId', "")
+            .then(articles => {
+                articles.map(el => el.userId.password = undefined)
+                res.status(200).json(articles)
+            })
+            .catch(err => next(err));
+    } else {
+        Article.find({ userId: userId })
+            .populate('userId', "")
+            .then(articles => {
+                articles.map(el => el.userId.password = undefined)
+                res.status(200).json(articles)
+            })
+            .catch(err => next(err));
+    }
+
 });
 
 //édition article
@@ -192,7 +205,6 @@ router.delete("/:articleId", (req, res, next) => {
                 .catch(err => next(err))
         })
 })
-
 
 //SNIPPET
 //création snippet
