@@ -16,7 +16,13 @@ router.get("/users/:userId/followers", (req, res, next) => {
     return;
   }
   User.find({ following: req.params.userId })
-    .then(followers => res.status(200).json(followers))
+    .then(followers => {
+      console.log("HELLO FOLLOWERS = ",followers)
+      for(let i = 0; i<followers.length; i++){
+        followers[i].password=undefined
+      }
+      
+      res.status(200).json(followers)})
     .catch(err => next(err))
 })
 
@@ -40,7 +46,9 @@ router.put("/users/:userId/follow", (req, res, next) => {
         .then((user) => {
           user.following.push(req.params.userId)
           user.save()
-            .then((response) => res.status(200).json({ userUpdatedFollows: response }))
+            .then((response) => {
+            user.password = undefined
+            res.status(200).json(response)})
             .catch(err => next(err))
         })
         .catch(err => next(err))
@@ -87,6 +95,7 @@ router.get("/users/:userId", (req, res, next) => {
         next(err)
         return
       }
+      user.password=undefined
       res.status(200).json(user)
     })
     .catch(err => next(err));
