@@ -100,7 +100,7 @@ router.post('/sessions', (req, res, next) => {
         const { _id, email, avatarUrl, username, bio, location, tags, website, linkedin, github, following, likes } = foundUser;
 
         // Create an object that will be set as the token payload
-        const payload = { _id,  email, avatarUrl, username, bio, location, tags, website, linkedin, github, following, likes };
+        const payload = { _id, email, avatarUrl, username, bio, location, tags, website, linkedin, github, following, likes };
 
         // Create and sign the token
         const authToken = jwt.sign(
@@ -125,7 +125,6 @@ router.get('/session', isAuthenticated, (req, res, next) => {
 
   // If JWT token is valid the payload gets decoded by the
   // isAuthenticated middleware and made available on `req.payload`
-  console.log(`req.payload`, req.payload);
 
   // Send back the object with user data
   // previously set as the token payload

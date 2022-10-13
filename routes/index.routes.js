@@ -31,8 +31,6 @@ router.get("/users/:userId/likes", (req, res, next) => {
     .catch(err => next(err))
 })
 
-
-
 //liste des followers d'un user
 router.get("/users/:userId/followers", (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
@@ -45,7 +43,6 @@ router.get("/users/:userId/followers", (req, res, next) => {
     .then(followers => {
 
       followers.map(el => {
-        console.log("el = ", el)
         return el.password = undefined
       })
       res.status(200).json(followers)
@@ -129,7 +126,6 @@ router.get("/users/:userId", (req, res, next) => {
         next(err)
         return
       }
-      console.log("user = ", user)
       user.password = undefined
       res.status(200).json(user)
     })
@@ -164,12 +160,6 @@ router.patch("/users/:userId", (req, res, next) => {
         next(err)
         return;
       }
-      //req.body contient il un champs username
-      //si oui => s'assurer que le username est unique
-      //si oui=> update User
-      //si non=> error message "please provide an other username"
-      //si non => yolo
-
       if (req.body.username !== userFromDB.username) {
         User.findOne({ username: req.body.username })
           .then((user) => {
@@ -188,8 +178,8 @@ router.patch("/users/:userId", (req, res, next) => {
       }
 
       function after() {
-        const { username, location, bio, avatarUrl, website, linkedin, github } = req.body
-        User.findByIdAndUpdate(req.params.userId, { username, location, bio, avatarUrl, website, linkedin, github }, { new: true })
+        const { username, location, bio, tags, avatarUrl, website, linkedin, github } = req.body
+        User.findByIdAndUpdate(req.params.userId, { username, location, bio, tags, avatarUrl, website, linkedin, github }, { new: true })
           .then(user => {
             if (!user) {
               const err = new Error('Could not find User')
@@ -236,7 +226,7 @@ router.post("/upload", fileUploader.single("avatarUrl"), (req, res, next) => {
   }
   // Get the URL of the uploaded file and send it as a response.
   // 'fileUrl' can be any name, just make sure you remember to use the same when accessing it on the frontend
-  res.json({ fileUrl: req.file.path });
+  res.json(req.file.path);
 
 });
 

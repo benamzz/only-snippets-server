@@ -229,7 +229,6 @@ router.post("/:articleId/snippets", (req, res, next) => {
                 articleId: req.params.id,
             })
                 .then(createdSnippet => {
-                    console.log('createdSnippet:', createdSnippet)
                     article.snippet = createdSnippet._id
                     article.save()
                     res.status(201).json(createdSnippet)
