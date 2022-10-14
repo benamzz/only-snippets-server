@@ -89,6 +89,7 @@ router.get("/:articleId", (req, res, next) => {
         return;
     }
     Article.findById(req.params.articleId)
+        .populate("snippet")
         .then(response => {
             if (!response) {
                 const err = new Error('Could not find article')
