@@ -223,7 +223,7 @@ router.get("/users", (req, res, next) => {
   User.find({ username: username })
     .then(user => {
       if (!user) {
-        const err = new Error('Could not find User with this id')
+        const err = new Error('Could not find User')
         err.status = 404
         next(err)
         return
