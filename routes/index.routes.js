@@ -217,6 +217,22 @@ router.put("/user/editpassword", (req, res, next) => {
     .catch(err => console.log(err))
 })
 
+//liste de users
+router.get("/users", (req, res, next) => {
+  const { username } = req.query;
+  User.find({ username: username })
+    .then(user => {
+      if (!user) {
+        const err = new Error('Could not find User with this id')
+        err.status = 404
+        next(err)
+        return
+      }
+      user.password = undefined
+      res.status(200).json(user)
+    })
+})
+
 //IMAGE
 //upload d'une image
 router.post("/upload", fileUploader.single("avatarUrl"), (req, res, next) => {
