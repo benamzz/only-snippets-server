@@ -6,11 +6,12 @@ const bcrypt = require('bcryptjs');
 const Article = require("../models/Article.model");
 const saltRounds = 10;
 const ObjectId = require('mongodb').ObjectId;
+const { isAuthenticated } = require('./../middleware/jwt.middleware.js');
 
 // USERS
 
 // liste des articles likés
-router.get("/users/:userId/likes", (req, res, next) => {
+router.get("/users/:userId/likes", isAuthenticated, (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -32,7 +33,7 @@ router.get("/users/:userId/likes", (req, res, next) => {
 })
 
 //liste des followers d'un user
-router.get("/users/:userId/followers", (req, res, next) => {
+router.get("/users/:userId/followers", isAuthenticated, (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -51,7 +52,7 @@ router.get("/users/:userId/followers", (req, res, next) => {
 })
 
 // follow d'un user
-router.put("/users/:userId/follow", (req, res, next) => {
+router.put("/users/:userId/follow", isAuthenticated, (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -82,7 +83,7 @@ router.put("/users/:userId/follow", (req, res, next) => {
 });
 
 // unfollow d'un user
-router.put("/users/:userId/unfollow", (req, res, next) => {
+router.put("/users/:userId/unfollow", isAuthenticated, (req, res, next) => {
   console.log("req.params.userId = ", req.params.userId)
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
@@ -110,7 +111,7 @@ router.put("/users/:userId/unfollow", (req, res, next) => {
 });
 
 //détails user
-router.get("/users/:userId", (req, res, next) => {
+router.get("/users/:userId", isAuthenticated, (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -133,7 +134,7 @@ router.get("/users/:userId", (req, res, next) => {
 });
 
 //édition user
-router.patch("/users/:userId", (req, res, next) => {
+router.patch("/users/:userId", isAuthenticated, (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -206,7 +207,7 @@ router.patch("/users/:userId", (req, res, next) => {
 })
 
 //édition password user
-router.put("/user/editpassword", (req, res, next) => {
+router.put("/user/editpassword", isAuthenticated, (req, res, next) => {
   if (!req.body.password) {
     const err = new Error("You must provide a password")
     err.status = 400
@@ -226,7 +227,7 @@ router.put("/user/editpassword", (req, res, next) => {
 })
 
 //liste de users
-router.get("/users", (req, res, next) => {
+router.get("/users", isAuthenticated, (req, res, next) => {
   const { username } = req.query;
   User.find({ username: username })
     .then(user => {
@@ -243,7 +244,7 @@ router.get("/users", (req, res, next) => {
 
 //IMAGE
 //upload d'une image
-router.post("/upload", fileUploader.single("avatarUrl"), (req, res, next) => {
+router.post("/upload", fileUploader.single("avatarUrl"), isAuthenticated, (req, res, next) => {
   if (!req.file) {
     next(new Error("No file uploaded!"));
     return;

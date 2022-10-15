@@ -3,10 +3,11 @@ const Article = require("../models/Article.model");
 const User = require("../models/User.model");
 const Snippet = require("../models/Snippet.model");
 const mongoose = require("mongoose");
+const { isAuthenticated } = require('./../middleware/jwt.middleware.js');
 
 // ARTICLE
 //like d'un article
-router.put("/:articleId/like", (req, res, next) => {
+router.put("/:articleId/like", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -37,7 +38,7 @@ router.put("/:articleId/like", (req, res, next) => {
 });
 
 //unlike d'un article
-router.put("/:articleId/unlike", (req, res, next) => {
+router.put("/:articleId/unlike", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -60,7 +61,7 @@ router.put("/:articleId/unlike", (req, res, next) => {
 });
 
 //liste des commentaires relatifs a un article
-router.get("/:articleId/comments", (req, res, next) => {
+router.get("/:articleId/comments", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -81,7 +82,7 @@ router.get("/:articleId/comments", (req, res, next) => {
 });
 
 //détails article
-router.get("/:articleId", (req, res, next) => {
+router.get("/:articleId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -104,7 +105,7 @@ router.get("/:articleId", (req, res, next) => {
 });
 
 //création article
-router.post("/", (req, res, next) => {
+router.post("/", isAuthenticated, (req, res, next) => {
     const { parentId } = req.query;
     Article.create({
         content: req.body.content,
@@ -121,7 +122,7 @@ router.post("/", (req, res, next) => {
 })
 
 //liste des articles
-router.get("/", (req, res, next) => {
+router.get("/", isAuthenticated, (req, res, next) => {
     const { userId } = req.query
     if (!userId) {
         Article.find()
@@ -144,7 +145,7 @@ router.get("/", (req, res, next) => {
 });
 
 //édition article
-router.patch("/:articleId", (req, res, next) => {
+router.patch("/:articleId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -183,7 +184,7 @@ router.patch("/:articleId", (req, res, next) => {
 });
 
 // suppression article
-router.delete("/:articleId", (req, res, next) => {
+router.delete("/:articleId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -213,7 +214,7 @@ router.delete("/:articleId", (req, res, next) => {
 
 //SNIPPET
 //création snippet
-router.post("/:articleId/snippets", (req, res, next) => {
+router.post("/:articleId/snippets", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -244,7 +245,7 @@ router.post("/:articleId/snippets", (req, res, next) => {
 });
 
 //édition snippet
-router.patch("/:articleId/snippets/:snippetId", (req, res, next) => {
+router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -296,7 +297,7 @@ router.patch("/:articleId/snippets/:snippetId", (req, res, next) => {
 })
 
 //détail snippet
-router.get("/:articleId/snippets/:snippetId", (req, res, next) => {
+router.get("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -333,7 +334,7 @@ router.get("/:articleId/snippets/:snippetId", (req, res, next) => {
 });
 
 // suppression snippet
-router.delete("/:articleId/snippets/:snippetId", (req, res, next) => {
+router.delete("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
