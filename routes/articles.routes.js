@@ -176,7 +176,7 @@ router.patch("/:articleId", (req, res, next) => {
             if (req.body.tag?.trim() === "") { req.body.tag = undefined }
             const obj = { content: req.body.content, snippet: req.body.snippet, tag: req.body.tag }
             Article.findByIdAndUpdate(req.params.articleId, obj, { new: true })
-                .then(response => res.status(200).json({ articleUpdated: response }))
+                .then(response => res.status(200).json(response))
                 .catch(err => next(err));
         })
         .catch(err => next(err));
@@ -288,7 +288,7 @@ router.patch("/:articleId/snippets/:snippetId", (req, res, next) => {
                     if (req.body.content?.trim() === "") { req.body.content = undefined }
                     snippet.content = req.body.content
                     snippet.save()
-                        .then(response => res.status(200).json({ snippetUpdated: response }))
+                        .then(response => res.status(200).json(response))
                         .catch(err => next(err))
                 })
         })
