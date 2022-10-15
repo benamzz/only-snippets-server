@@ -20,7 +20,7 @@ const userSchema = new Schema(
     location: String,
     tags: Array,
     website: String,
-    linkedIn: String,
+    linkedin: String,
     github: String,
     following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     likes: Array

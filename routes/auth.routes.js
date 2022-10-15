@@ -122,12 +122,8 @@ router.post('/sessions', (req, res, next) => {
 
 // GET  /auth/sessions  -  Used to verify JWT stored on the client
 router.get('/session', isAuthenticated, (req, res, next) => {
-
-  // If JWT token is valid the payload gets decoded by the
-  // isAuthenticated middleware and made available on `req.payload`
-
-  // Send back the object with user data
-  // previously set as the token payload
-  res.status(200).json(req.payload);
+  User.findById(req.payload._id)
+    .then((user) => { res.json(user) })
+    .catch(err => next(err))
 });
 module.exports = router;

@@ -181,7 +181,7 @@ router.patch("/users/:userId", (req, res, next) => {
         if (req.body.username?.trim() === "") { req.body.username = undefined }
         if (req.body.location?.trim() === "") { req.body.location = undefined }
         if (req.body.bio?.trim() === "") { req.body.bio = undefined }
-        if (req.body.tags?.trim() === []) { req.body.tags = undefined }
+        if (req.body.tags === []) { req.body.tags = undefined }
         if (req.body.avatarUrl?.trim() === "") { req.body.avatarUrl = undefined }
         if (req.body.website?.trim() === "") { req.body.website = undefined }
         if (req.body.linkedin?.trim() === "") { req.body.linkedin = undefined }
