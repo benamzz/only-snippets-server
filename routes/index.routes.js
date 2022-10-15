@@ -178,6 +178,14 @@ router.patch("/users/:userId", (req, res, next) => {
       }
 
       function after() {
+        if (req.body.username?.trim() === "") { req.body.username = undefined }
+        if (req.body.location?.trim() === "") { req.body.location = undefined }
+        if (req.body.bio?.trim() === "") { req.body.bio = undefined }
+        if (req.body.tags?.trim() === []) { req.body.tags = undefined }
+        if (req.body.avatarUrl?.trim() === "") { req.body.avatarUrl = undefined }
+        if (req.body.website?.trim() === "") { req.body.website = undefined }
+        if (req.body.linkedin?.trim() === "") { req.body.linkedin = undefined }
+        if (req.body.github?.trim() === "") { req.body.github = undefined }
         const { username, location, bio, tags, avatarUrl, website, linkedin, github } = req.body
         User.findByIdAndUpdate(req.params.userId, { username, location, bio, tags, avatarUrl, website, linkedin, github }, { new: true })
           .then(user => {
