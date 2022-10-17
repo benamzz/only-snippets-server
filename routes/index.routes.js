@@ -228,19 +228,26 @@ router.put("/user/editpassword", isAuthenticated, (req, res, next) => {
 
 //liste de users
 router.get("/users", isAuthenticated, (req, res, next) => {
-  const { username } = req.query;
-  User.find({ username: username })
-    .then(user => {
-      if (!user) {
-        const err = new Error('Could not find User')
-        err.status = 404
-        next(err)
-        return
-      }
-      user.password = undefined
-      res.status(200).json(user)
+  User.find()
+    .then(users => {
+      res.status(200).json(users)
     })
+    .catch(err => next(err));
 })
+// router.get("/users", isAuthenticated, (req, res, next) => {
+//   const { username } = req.query;
+//   User.find({ username: username })
+//     .then(user => {
+//       if (!user) {
+//         const err = new Error('Could not find User')
+//         err.status = 404
+//         next(err)
+//         return
+//       }
+//       user.password = undefined
+//       res.status(200).json(user)
+//     })
+// })
 
 //IMAGE
 //upload d'une image
