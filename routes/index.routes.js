@@ -84,7 +84,6 @@ router.put("/users/:userId/follow", isAuthenticated, (req, res, next) => {
 
 // unfollow d'un user
 router.put("/users/:userId/unfollow", isAuthenticated, (req, res, next) => {
-  console.log("req.params.userId = ", req.params.userId)
   if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
     const err = new Error("User id is not valid")
     err.status = 400
@@ -101,8 +100,7 @@ router.put("/users/:userId/unfollow", isAuthenticated, (req, res, next) => {
       }
       User.findByIdAndUpdate(req.payload._id, { $pull: { following: ObjectId(req.params.userId) } }, { new: true })
         .then(response => {
-          console.log("response = ", response)
-          res.status(200).json({ userUpdatedFollows: response })
+          res.status(200).json(response)
         })
 
         .catch(err => next(err))
