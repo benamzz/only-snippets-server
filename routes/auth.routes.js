@@ -6,7 +6,7 @@ const { isAuthenticated } = require('./../middleware/jwt.middleware.js');
 const router = express.Router();
 const saltRounds = 10;
 
-// POST /auth/users  - Creates a new user in the database
+// Création d'un user
 router.post('/users', (req, res, next) => {
   const { email, password } = req.body;
 
@@ -60,6 +60,7 @@ router.post('/users', (req, res, next) => {
       const user = { email, _id, username };
       // Send a json response containing the user object
       createdUser.username = username
+      createdUser.avatarUrl = "https://res.cloudinary.com/dqkqgqlne/image/upload/v1665843894/avatars%20gallery/c5glastvlijiucl5uvgl.png"
       createdUser.save()
         .then(() => {
           res.status(201).json(user);
@@ -72,7 +73,7 @@ router.post('/users', (req, res, next) => {
     });
 });
 
-// POST  /auth/sessions - Verifies email and password and returns a JWT
+//Login
 router.post('/sessions', (req, res, next) => {
   const { email, password } = req.body;
 
@@ -120,7 +121,7 @@ router.post('/sessions', (req, res, next) => {
     .catch(err => res.status(500).json({ message: "Internal Server Error" }));
 });
 
-// GET  /auth/sessions  -  Used to verify JWT stored on the client
+//get session
 router.get('/session', isAuthenticated, (req, res, next) => {
   User.findById(req.payload._id)
     .then((user) => {
