@@ -109,7 +109,6 @@ router.post("/", isAuthenticated, (req, res, next) => {
     const { parentId } = req.query;
     Article.create({
         content: req.body.content,
-        tag: req.body.tag,
         userId: req.payload._id,
         parentId: parentId,
     })
@@ -172,12 +171,14 @@ router.patch("/:articleId", isAuthenticated, (req, res, next) => {
                 next(err)
                 return;
             }
+            console.log("req.body", req.body)
             if (req.body.content?.trim() === "") { req.body.content = undefined }
+            const requestBody = { content: req.body.snippet, tag: req.body.tag }
+            console.log("requestBody", requestBody)
             if (req.body.snippet?.trim() === "") { req.body.snippet = undefined }
             if (req.body.tag?.trim() === "") { req.body.tag = undefined }
-            const obj = { content: req.body.content, snippet: req.body.snippet, tag: req.body.tag }
-            Article.findByIdAndUpdate(req.params.articleId, obj, { new: true })
-                .then(response => res.status(200).json(response))
+            Article.findByIdAndUpdate(req.params.articleId, { content: req.body.content }, { new: true })
+                .then((response) => { res.status(204).json(response) })
                 .catch(err => next(err));
         })
         .catch(err => next(err));
@@ -233,6 +234,7 @@ router.post("/:articleId/snippets", isAuthenticated, (req, res, next) => {
                 content: req.body.snippet,
                 userId: req.payload._id,
                 articleId: req.params.id,
+                tag: req.body.tag
             })
                 .then(createdSnippet => {
                     article.snippet = createdSnippet._id
@@ -287,7 +289,9 @@ router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next
                         return;
                     }
                     if (req.body.content?.trim() === "") { req.body.content = undefined }
-                    snippet.content = req.body.content
+                    else { snippet.content = req.body.content }
+                    if (req.body.tag?.trim() === "") { req.body.tag = undefined }
+                    else { snippet.tag = req.body.tag }
                     snippet.save()
                         .then(response => res.status(200).json(response))
                         .catch(err => next(err))
