@@ -123,7 +123,10 @@ router.post('/sessions', (req, res, next) => {
 // GET  /auth/sessions  -  Used to verify JWT stored on the client
 router.get('/session', isAuthenticated, (req, res, next) => {
   User.findById(req.payload._id)
-    .then((user) => { res.json(user) })
+    .then((user) => {
+      user.password = undefined
+      res.json(user)
+    })
     .catch(err => next(err))
 });
 module.exports = router;
