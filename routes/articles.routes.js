@@ -90,6 +90,7 @@ router.get("/:articleId", isAuthenticated, (req, res, next) => {
         return;
     }
     Article.findById(req.params.articleId)
+        .populate('userId')
         .populate("snippet")
         .then(response => {
             if (!response) {
@@ -126,6 +127,7 @@ router.get("/", isAuthenticated, (req, res, next) => {
     if (!userId) {
         Article.find()
             .populate('userId', "")
+            .populate('snippet')
             .then(articles => {
                 articles.map(el => el.userId.password = undefined)
                 res.status(200).json(articles)
@@ -134,6 +136,7 @@ router.get("/", isAuthenticated, (req, res, next) => {
     } else {
         Article.find({ userId: userId })
             .populate('userId', "")
+            .populate('snippet')
             .then(articles => {
                 articles.map(el => el.userId.password = undefined)
                 res.status(200).json(articles)
@@ -243,7 +246,6 @@ router.post("/:articleId/snippets", isAuthenticated, (req, res, next) => {
 
 //édition snippet
 router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next) => {
-    console.log("req.body:", req.body)
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -288,10 +290,7 @@ router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next
                     else { snippet.content = req.body.content }
                     snippet.tag = req.body.tag
                     snippet.save()
-                        .then(response => {
-                            console.log("response:", response)
-                            res.status(200).json(response)
-                        })
+                        .then(response => res.status(200).json(response))
                         .catch(err => next(err))
                 })
         })
