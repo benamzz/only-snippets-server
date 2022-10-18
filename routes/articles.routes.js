@@ -171,12 +171,7 @@ router.patch("/:articleId", isAuthenticated, (req, res, next) => {
                 next(err)
                 return;
             }
-            console.log("req.body", req.body)
             if (req.body.content?.trim() === "") { req.body.content = undefined }
-            const requestBody = { content: req.body.snippet, tag: req.body.tag }
-            console.log("requestBody", requestBody)
-            if (req.body.snippet?.trim() === "") { req.body.snippet = undefined }
-            if (req.body.tag?.trim() === "") { req.body.tag = undefined }
             Article.findByIdAndUpdate(req.params.articleId, { content: req.body.content }, { new: true })
                 .then((response) => { res.status(204).json(response) })
                 .catch(err => next(err));
@@ -248,6 +243,7 @@ router.post("/:articleId/snippets", isAuthenticated, (req, res, next) => {
 
 //édition snippet
 router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next) => {
+    console.log("req.body:", req.body)
     if (!mongoose.Types.ObjectId.isValid(req.params.articleId)) {
         const err = new Error("Article id is not valid")
         err.status = 400
@@ -290,10 +286,12 @@ router.patch("/:articleId/snippets/:snippetId", isAuthenticated, (req, res, next
                     }
                     if (req.body.content?.trim() === "") { req.body.content = undefined }
                     else { snippet.content = req.body.content }
-                    if (req.body.tag?.trim() === "") { req.body.tag = undefined }
-                    else { snippet.tag = req.body.tag }
+                    snippet.tag = req.body.tag
                     snippet.save()
-                        .then(response => res.status(200).json(response))
+                        .then(response => {
+                            console.log("response:", response)
+                            res.status(200).json(response)
+                        })
                         .catch(err => next(err))
                 })
         })
