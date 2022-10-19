@@ -69,6 +69,8 @@ router.get("/:articleId/comments", isAuthenticated, (req, res, next) => {
         return;
     }
     Article.find({ parentId: req.params.articleId })
+        .populate("userId")
+        .populate("snippet")
         .then(comments => {
             if (comments.length < 1) {
                 const err = new Error('Could not find Comments')
@@ -76,7 +78,9 @@ router.get("/:articleId/comments", isAuthenticated, (req, res, next) => {
                 next(err)
                 return
             }
+            comments.map(e => e.userId.password = undefined)
             res.status(200).json(comments)
+
         })
         .catch(err => next(err))
 });

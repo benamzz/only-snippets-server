@@ -21,9 +21,11 @@ router.get("/users/:userId/likes", isAuthenticated, (req, res, next) => {
   User.findById(req.params.userId)
     .then(user => {
       Article.find({ _id: { "$in": user.likes } })
+        .populate("userId")
+        .populate("snippet")
         .then(likes => {
           likes.map(el => {
-            return el.password = undefined
+            return el.userId.password = undefined
           })
           res.status(200).json(likes)
         })
