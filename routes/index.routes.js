@@ -174,6 +174,12 @@ router.patch("/users/:userId", isAuthenticated, (req, res, next) => {
             }
           })
           .catch((err) => next(err))
+        if (req.body.username.length > 12) {
+          const err = new Error('username must be 12 characters long')
+          err.status = 400
+          next(err)
+          return
+        }
       } else {
         after()
       }
@@ -234,20 +240,6 @@ router.get("/users", isAuthenticated, (req, res, next) => {
     })
     .catch(err => next(err));
 })
-// router.get("/users", isAuthenticated, (req, res, next) => {
-//   const { username } = req.query;
-//   User.find({ username: username })
-//     .then(user => {
-//       if (!user) {
-//         const err = new Error('Could not find User')
-//         err.status = 404
-//         next(err)
-//         return
-//       }
-//       user.password = undefined
-//       res.status(200).json(user)
-//     })
-// })
 
 //IMAGE
 //upload d'une image
