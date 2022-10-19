@@ -60,7 +60,7 @@ router.post('/users', (req, res, next) => {
       const user = { email, _id, username };
       // Send a json response containing the user object
       createdUser.username = username
-      createdUser.avatarUrl = "https://res.cloudinary.com/dqkqgqlne/image/upload/v1665843894/avatars%20gallery/c5glastvlijiucl5uvgl.png"
+      createdUser.avatarUrl = "https://res.cloudinary.com/dqkqgqlne/image/upload/v1666190153/avatars%20gallery/ragw4icj25z4bxxg2fv3.png"
       createdUser.save()
         .then(() => {
           res.status(201).json(user);
