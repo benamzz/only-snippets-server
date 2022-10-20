@@ -236,6 +236,8 @@ router.put("/user/editpassword", isAuthenticated, (req, res, next) => {
 router.get("/users", isAuthenticated, (req, res, next) => {
   User.find()
     .then(users => {
+      console.log("users = ", users)
+      users.map(el => el.password = undefined)
       res.status(200).json(users)
     })
     .catch(err => next(err));
