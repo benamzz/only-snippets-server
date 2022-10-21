@@ -130,6 +130,7 @@ router.get("/", isAuthenticated, (req, res, next) => {
     const { userId } = req.query
     if (!userId) {
         Article.find()
+            .sort({ updatedAt: -1 })
             .populate('userId', "")
             .populate('snippet')
             .then(articles => {
@@ -139,6 +140,7 @@ router.get("/", isAuthenticated, (req, res, next) => {
             .catch(err => next(err));
     } else {
         Article.find({ userId: userId })
+            .sort({ updatedAt: -1 })
             .populate('userId', "")
             .populate('snippet')
             .then(articles => {
