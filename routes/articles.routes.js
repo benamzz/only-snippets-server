@@ -213,7 +213,7 @@ router.delete("/:articleId", isAuthenticated, (req, res, next) => {
             if (article.parentId !== "") {
                 Article.findByIdAndUpdate(article.parentId, { $pull: { comments: req.params.articleId } }, { new: true })
                     .then(parentArticle => {
-                        parentArticle.comments = undefined
+                        parentArticle.save()
                     })
                     .catch(err => next(err))
             }

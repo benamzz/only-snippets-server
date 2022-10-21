@@ -155,12 +155,6 @@ router.patch("/users/:userId", isAuthenticated, (req, res, next) => {
         next(err)
         return
       }
-      if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
-        const err = new Error("E0001: User id is not valid")
-        err.status = 400
-        next(err)
-        return;
-      }
       if (req.body.username !== userFromDB.username) {
         User.findOne({ username: req.body.username })
           .then((user) => {
@@ -174,12 +168,6 @@ router.patch("/users/:userId", isAuthenticated, (req, res, next) => {
             }
           })
           .catch((err) => next(err))
-        if (req.body.username.length > 12) {
-          const err = new Error('username must be 12 characters long')
-          err.status = 400
-          next(err)
-          return
-        }
       } else {
         after()
       }
