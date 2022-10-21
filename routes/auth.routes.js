@@ -5,6 +5,8 @@ const User = require("../models/User.model");
 const { isAuthenticated } = require('./../middleware/jwt.middleware.js');
 const router = express.Router();
 const saltRounds = 10;
+const ObjectID = require('mongodb').ObjectId;
+
 
 // Création d'un user
 router.post('/users', (req, res, next) => {
@@ -52,6 +54,7 @@ router.post('/users', (req, res, next) => {
       // Send a json response containing the user object
       createdUser.username = username
       createdUser.avatarUrl = "https://res.cloudinary.com/dqkqgqlne/image/upload/v1666190153/avatars%20gallery/ragw4icj25z4bxxg2fv3.png"
+      createdUser.following.push(ObjectID('6352ab7aa6170289ca1e04ea'))
       createdUser.save()
         .then(() => {
           res.status(201).json(user);
