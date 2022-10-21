@@ -208,6 +208,13 @@ router.delete("/:articleId", isAuthenticated, (req, res, next) => {
                 next(err)
                 return
             }
+            if (article.parentId !== "") {
+                Article.findByIdAndUpdate(article.parentId, { $pull: { comments: req.params.articleId } }, { new: true })
+                    .then(parentArticle => {
+                        parentArticle.comments = undefined
+                    })
+                    .catch(err => next(err))
+            }
             article.deletedAt = new Date()
             article.save()
                 .then(() => res.status(204).send())
